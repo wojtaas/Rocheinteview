@@ -55,7 +55,7 @@ func (api *API) EchoPing(w http.ResponseWriter, r *http.Request) {
 	pingResponse := api.service.Ping(message)
 
 	if err := json.NewEncoder(w).Encode(pingResponse); err != nil {
-		http.Error(w, fmt.Sprintf("json.NewEncoder().Encode(): %w", err), http.StatusInternalServerError)
+		http.Error(w, fmt.Sprintf("json.NewEncoder().Encode(): %s", err), http.StatusInternalServerError)
 	}
 }
 
