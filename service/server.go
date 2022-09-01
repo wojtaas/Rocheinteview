@@ -10,11 +10,6 @@ type Server struct {
 	service Service
 }
 
-func (s *Server) mustEmbedUnimplementedGRPCPingServer() {
-	//TODO implement me
-	panic("implement me")
-}
-
 func NewServer(sv Service) *Server {
 	return &Server{service: sv}
 }

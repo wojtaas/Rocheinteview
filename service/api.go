@@ -58,7 +58,3 @@ func (api *API) EchoPing(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, fmt.Sprintf("json.NewEncoder().Encode(): %s", err), http.StatusInternalServerError)
 	}
 }
-
-type APIDataResp struct {
-	Data interface{} `json:"data"`
-}
