@@ -1,0 +1,38 @@
+basePath: /api
+definitions:
+  rocheinteview.PingResponse:
+    properties:
+      echo:
+        type: string
+      env:
+        type: string
+      timestamp:
+        type: integer
+      version:
+        type: string
+    type: object
+info:
+  contact: {}
+  title: Roche-Interview
+  version: 1.0.0
+paths:
+  /v1/roche/echo:
+    post:
+      description: Returns message that was in parameter, with additionally fields.
+      parameters:
+      - description: message
+        in: path
+        name: message
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/rocheinteview.PingResponse'
+        "500":
+          description: server error
+      summary: EchoPing
+      tags:
+      - Roche-Interview
+swagger: "2.0"

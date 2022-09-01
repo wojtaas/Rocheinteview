@@ -1,0 +1,19 @@
+syntax = "proto3";
+option go_package = "grpc/pb-go";
+
+
+
+service GRPCPing {
+  rpc Ping (PingRequest) returns (PingResponse);
+}
+
+message PingRequest{
+  string message = 1;
+}
+
+message PingResponse{
+  string echo = 1;
+  int64 timestamp = 2;
+  string env = 3;
+  string version = 4;
+}
