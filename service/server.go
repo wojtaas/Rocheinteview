@@ -3,11 +3,16 @@ package service
 import (
 	"context"
 	"google.golang.org/grpc"
-	. "rocheinteview/grpc/proto/grpc/pb-go"
+	. "rocheinteview/grpc/proto"
 )
 
 type Server struct {
 	service Service
+}
+
+func (s *Server) mustEmbedUnimplementedGRPCPingServer() {
+	//TODO implement me
+	panic("implement me")
 }
 
 func NewServer(sv Service) *Server {
@@ -15,7 +20,7 @@ func NewServer(sv Service) *Server {
 }
 
 func (s *Server) Register(server *grpc.Server) {
-	//RegisterGRPCPingServer(server, s)
+	RegisterGRPCPingServer(server, s)
 }
 
 func (s *Server) Ping(ctx context.Context, request *PingRequest) (*PingResponse, error) {
