@@ -3,22 +3,24 @@ package service
 import (
 	"context"
 	"google.golang.org/grpc"
-	. "rocheinteview/grpc/proto"
+	. "rocheinteview/grpc/pb-go"
 )
 
-type Server struct {
+type server struct {
 	service Service
 }
 
-func NewServer(sv Service) *Server {
-	return &Server{service: sv}
+func NewServer(sv Service) *server {
+	return &server{service: sv}
 }
 
-func (s *Server) Register(server *grpc.Server) {
+// Register func is used to register GRPC server.
+func (s *server) Register(server *grpc.Server) {
 	RegisterGRPCPingServer(server, s)
 }
 
-func (s *Server) Ping(ctx context.Context, request *PingRequest) (*PingResponse, error) {
+// Ping func is used to recevie GRPC message, and response with additional parameters - works similar like service/ping func.
+func (s *server) Ping(ctx context.Context, request *PingRequest) (*PingResponse, error) {
 	pingOutput := s.service.Ping(request.Message)
 	return &PingResponse{
 		Echo:      pingOutput.Echo,

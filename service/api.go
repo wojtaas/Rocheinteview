@@ -47,14 +47,22 @@ func (api *API) GetHandler() http.Handler {
 // @tags Roche-Interview
 // @param message path string true "message"
 // @failure 500 "server error"
+// @failure 400 "not found field message in path"
 // @success 200 {object} rocheinteview.PingResponse
 // @Router /v1/roche/echo [post]
 func (api *API) EchoPing(w http.ResponseWriter, r *http.Request) {
+
+	if !r.URL.Query().Has(rocheinteview.PingMessage) {
+		http.Error(w, "not found message in path", http.StatusBadRequest)
+		return
+	}
+
 	message := r.URL.Query().Get(rocheinteview.PingMessage)
 
 	pingResponse := api.service.Ping(message)
 
 	if err := json.NewEncoder(w).Encode(pingResponse); err != nil {
 		http.Error(w, fmt.Sprintf("json.NewEncoder().Encode(): %s", err), http.StatusInternalServerError)
+		return
 	}
 }

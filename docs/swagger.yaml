@@ -30,6 +30,8 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/rocheinteview.PingResponse'
+        "400":
+          description: not found field message in path
         "500":
           description: server error
       summary: EchoPing
