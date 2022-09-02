@@ -11,7 +11,7 @@ import (
 )
 
 type Service interface {
-	Ping(message string) rocheinteview.PingResponse
+	Ping(message string) (rocheinteview.PingResponse, error)
 }
 
 type API struct {
@@ -43,7 +43,7 @@ func (api *API) GetHandler() http.Handler {
 
 // EchoPing
 // @summary EchoPing
-// @description Returns message that was in parameter, with additionally fields.
+// @description Returns echo message from Postman, with additionally fields.
 // @tags Roche-Interview
 // @param message path string true "message"
 // @failure 500 "server error"
@@ -51,7 +51,6 @@ func (api *API) GetHandler() http.Handler {
 // @success 200 {object} rocheinteview.PingResponse
 // @Router /v1/roche/echo [post]
 func (api *API) EchoPing(w http.ResponseWriter, r *http.Request) {
-
 	if !r.URL.Query().Has(rocheinteview.PingMessage) {
 		http.Error(w, "not found message in path", http.StatusBadRequest)
 		return
@@ -59,7 +58,11 @@ func (api *API) EchoPing(w http.ResponseWriter, r *http.Request) {
 
 	message := r.URL.Query().Get(rocheinteview.PingMessage)
 
-	pingResponse := api.service.Ping(message)
+	pingResponse, err := api.service.Ping(message)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("api.service.Ping() %s", err), http.StatusInternalServerError)
+		return
+	}
 
 	if err := json.NewEncoder(w).Encode(pingResponse); err != nil {
 		http.Error(w, fmt.Sprintf("json.NewEncoder().Encode(): %s", err), http.StatusInternalServerError)

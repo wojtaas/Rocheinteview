@@ -1,6 +1,9 @@
 package rocheinteview
 
-const PingMessage = "message"
+const (
+	PingMessage    = "message"
+	PostmanEchoURL = "https://postman-echo.com/get?message=%s"
+)
 
 type PingResponse struct {
 	Echo      string `json:"echo"`

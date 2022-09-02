@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"errors"
 	"github.com/stretchr/testify/assert"
 	"reflect"
 	"rocheinteview"
@@ -17,8 +18,8 @@ func TestServer_Ping(t *testing.T) {
 		service    Service
 		message    string
 		wantOutput *PingResponse
+		wantErr    bool
 	}{
-
 		{
 			name:    "ok",
 			message: "hello",
@@ -35,9 +36,26 @@ func TestServer_Ping(t *testing.T) {
 					Timestamp: time.Now().Unix(),
 					Env:       "someEnv",
 					Version:   "1.0.0",
-				})
+				}, nil)
 				return m
 			}(),
+			wantErr: false,
+		},
+		{
+			name:    "fail path",
+			message: "hello",
+			wantOutput: &PingResponse{
+				Echo:      "hello",
+				Timestamp: time.Now().Unix(),
+				Env:       "someEnv",
+				Version:   "1.0.0",
+			},
+			service: func() *mocks.Service {
+				m := new(mocks.Service)
+				m.On("Ping", "hello").Return(rocheinteview.PingResponse{}, errors.New("some internal error"))
+				return m
+			}(),
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
@@ -45,10 +63,14 @@ func TestServer_Ping(t *testing.T) {
 			s := server{service: tt.service}
 
 			response, err := s.Ping(context.Background(), &PingRequest{Message: tt.message})
+
+			if tt.wantErr {
+				assert.Error(t, err)
+				return
+			}
 			if !reflect.DeepEqual(response, tt.wantOutput) {
 				t.Errorf("s.Ping{} got= %v, want %v", response, tt.wantOutput)
 			}
-			assert.NoError(t, err)
 		})
 	}
 }

@@ -1,10 +1,9 @@
 package service
 
 import (
+	"github.com/stretchr/testify/assert"
 	"rocheinteview"
-	"strings"
 	"testing"
-	"time"
 )
 
 func TestService_Ping(t *testing.T) {
@@ -27,10 +26,8 @@ func TestService_Ping(t *testing.T) {
 				env:     "OS",
 			},
 			wantOutput: rocheinteview.PingResponse{
-				Echo:      "hello",
-				Timestamp: time.Now().Unix(),
-				Env:       "OS",
-				Version:   "1.0.0",
+				Env:     "OS",
+				Version: "1.0.0",
 			},
 		},
 		{
@@ -40,9 +37,7 @@ func TestService_Ping(t *testing.T) {
 				message: "Hey Hi Hello Some More Text",
 			},
 			wantOutput: rocheinteview.PingResponse{
-				Echo:      "Hey Hi Hello Some More Text",
-				Timestamp: time.Now().Unix(),
-				Version:   "0.0.1",
+				Version: "0.0.1",
 			},
 		},
 	}
@@ -52,20 +47,12 @@ func TestService_Ping(t *testing.T) {
 				config:  rocheinteview.Config{Env: tt.args.env},
 				Version: tt.args.version,
 			}
-			output := s.Ping(tt.args.message)
-			if !strings.EqualFold(output.Echo, tt.wantOutput.Echo) {
-				t.Errorf("ECHO: want %s got %s", tt.wantOutput.Echo, output.Echo)
-			}
-			if !strings.EqualFold(output.Version, tt.wantOutput.Version) {
-				t.Errorf("VERSION: want %s got %s", tt.wantOutput.Version, output.Version)
-			}
-			if !strings.EqualFold(output.Env, tt.wantOutput.Env) {
-				t.Errorf("ENV: want %s got %s", tt.wantOutput.Env, output.Env)
-			}
-			if output.Timestamp != tt.wantOutput.Timestamp {
-				t.Errorf("TIMESTAMP: want %d got %d", tt.wantOutput.Timestamp, output.Timestamp)
-			}
+			output, err := s.Ping(tt.args.message)
 
+			assert.NoError(t, err)
+			assert.NotEmpty(t, output.Echo)
+			assert.Equal(t, output.Env, tt.wantOutput.Env)
+			assert.Equal(t, output.Version, tt.wantOutput.Version)
 		})
 	}
 }
